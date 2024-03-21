@@ -9,6 +9,7 @@ from langchain.prompts import (
 )
 from langchain.schema import SystemMessage
 
+from handlers.chat_model_start_handler import ChatModelStartHandler
 from tools.report import write_report_tool
 from tools.sql import describe_tables_tool, list_tables, run_query_tool
 
@@ -16,7 +17,10 @@ load_dotenv()
 
 # model="gpt-4"
 
-chat = ChatOpenAI()
+handler = ChatModelStartHandler()
+chat = ChatOpenAI(
+    callbacks=[handler],
+)
 tables = list_tables()
 
 prompt = ChatPromptTemplate(
@@ -38,10 +42,11 @@ prompt = ChatPromptTemplate(
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 tools = [run_query_tool, describe_tables_tool, write_report_tool]
 
-#  Initializing a table
+#  Initializing a agent
 agent = OpenAIFunctionsAgent(llm=chat, prompt=prompt, tools=tools)
 
-agent_executor = AgentExecutor(agent=agent, verbose=True, tools=tools, memory=memory)
+# Initializaing executor, used to run the agent(chain)
+agent_executor = AgentExecutor(agent=agent, tools=tools, memory=memory)  # verbose=True,
 
 # agent_executor("How many users have shipping address?")
 agent_executor("How many orders are there? Write the result to an html report.")
