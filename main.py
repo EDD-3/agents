@@ -41,6 +41,6 @@ agent = OpenAIFunctionsAgent(llm=chat, prompt=prompt, tools=tools)
 agent_executor = AgentExecutor(agent=agent, verbose=True, tools=tools)
 
 # agent_executor("How many users have shipping address?")
-agent_executor(
-    "Summarize the top 5 most popular products. Write the results to a report file"
-)
+agent_executor("How many orders are there? Write the result to an html report.")
+
+agent_executor("Repeat the exact same process for users.")
